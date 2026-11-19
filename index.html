@@ -148,8 +148,109 @@ renderDeals();
 alert("Your demo listing has been added!");
 }
 renderDeals();
+
+<script>
+const defaultDeals = [
+{title:"Modern apartment",category:"Property",price:"€185,000",country:"Italy"},
+{title:"Luxury sports car",category:"Vehicles",price:"€42,000",country:"Germany"},
+{title:"Professional laptop",category:"Electronics",price:"€950",country:"France"},
+{title:"Premium fashion collection",category:"Fashion",price:"€250",country:"Sweden"},
+{title:"Digital marketing service",category:"Services",price:"€500",country:"Worldwide"},
+{title:"Established online business",category:"Business",price:"€25,000",country:"Spain"}
+];
+
+let deals;
+try {
+  deals = JSON.parse(localStorage.getItem("globalDealListings")) || defaultDeals;
+} catch (error) {
+  deals = defaultDeals;
+}
+
+let selectedCategory = "All";
+
+function saveDeals() {
+  localStorage.setItem("globalDealListings", JSON.stringify(deals));
+}
+
+function setCategory(category, button) {
+  selectedCategory = category;
+  document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
+  button.classList.add("active");
+  renderDeals();
+}
+
+function renderDeals() {
+  const query = document.getElementById("search").value.toLowerCase();
+  const filtered = deals.filter(deal =>
+    (selectedCategory === "All" || deal.category === selectedCategory) &&
+    (deal.title.toLowerCase().includes(query) ||
+     deal.category.toLowerCase().includes(query) ||
+     deal.country.toLowerCase().includes(query))
+  );
+
+  const container = document.getElementById("deals");
+  container.innerHTML = "";
+
+  if (filtered.length === 0) {
+    container.textContent = "No deals found. Try another search.";
+    return;
+  }
+
+  filtered.forEach(deal => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = deal.title;
+
+    const details = document.createElement("p");
+    details.className = "small";
+    details.textContent = deal.category + " · " + deal.country;
+
+    const price = document.createElement("div");
+    price.className = "price";
+    price.textContent = deal.price;
+
+    const button = document.createElement("button");
+    button.textContent = "View deal";
+    button.onclick = () => alert(
+      deal.title + "\n" + deal.price + "\n" + deal.country +
+      "\n\nDemo listing. Secure transactions are coming later."
+    );
+
+    card.append(title, details, price, button);
+    container.appendChild(card);
+  });
+}
+
+function addDeal() {
+  const title = document.getElementById("title").value.trim();
+  const category = document.getElementById("newCategory").value;
+  const price = document.getElementById("price").value.trim();
+  const country = document.getElementById("country").value.trim();
+
+  if (!title || !price || !country) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  deals.unshift({title, category, price, country});
+  saveDeals();
+
+  document.getElementById("title").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("country").value = "";
+
+  selectedCategory = "All";
+  document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
+  document.querySelector(".categories button").classList.add("active");
+
+  renderDeals();
+  alert("Your listing has been saved on this device!");
+}
+
+renderDeals();
 </script>
-</body>
-</html>
+
 
 
