@@ -1,63 +1,155 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GLOBAL DEAL</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#071426;color:white;font-family:Arial,sans-serif}
-header{padding:25px 20px;border-bottom:1px solid #b99a55}
-.logo{color:#d9b65e;font-size:27px;font-weight:bold;letter-spacing:2px}
-.tag{color:#aaa;font-size:11px;margin-top:7px}
-main{padding:22px 18px;max-width:700px;margin:auto}
-h1{font-size:36px;line-height:1.2}
-.gold{color:#d9b65e}
-p{color:#b9c3d0;line-height:1.6}
-.search{width:100%;padding:16px;border-radius:12px;border:1px solid #b99a55;background:#10233b;color:white;font-size:16px}
-h2{margin-top:32px}
-.categories{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.category,.deal{background:#10233b;border:1px solid #263c54;border-radius:14px;padding:20px}
-.category{color:#e5c477;text-align:center}
-.deal{margin-top:12px}
-button{background:#d9b65e;color:#071426;border:0;border-radius:10px;padding:13px 18px;font-weight:bold}
-footer{text-align:center;padding:30px;color:#aaa;font-size:12px}
+body{margin:0;background:#071426;color:#fff;font-family:Arial,sans-serif}
+header{padding:25px 18px;text-align:center;border-bottom:1px solid #b99548}
+.logo{font-size:30px;font-weight:900;letter-spacing:3px;color:#e4bd68}
+.tagline{color:#c8cbd2;font-size:12px;margin-top:7px}
+main{padding:20px;max-width:850px;margin:auto}
+h2{color:#e4bd68}
+input,select,button{width:100%;padding:14px;border-radius:9px;border:1px solid #34445a;margin:7px 0;font-size:15px}
+input,select{background:#10243b;color:white}
+button{background:#d5ad58;color:#071426;font-weight:bold;border:0;cursor:pointer}
+.categories{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.categories button{background:#142b45;color:#e4bd68;border:1px solid #9b7b3c}
+.categories button.active{background:#d5ad58;color:#071426}
+.deals{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:15px}
+.card{background:#10243b;border:1px solid #34445a;border-radius:13px;padding:16px}
+.card h3{color:#e4bd68;margin-top:5px}
+.price{font-size:21px;font-weight:bold;margin:10px 0}
+.small{color:#bdc7d4;font-size:13px}
+footer{text-align:center;padding:30px;color:#aab4c2;font-size:12px}
 </style>
 </head>
 <body>
 <header>
 <div class="logo">GLOBAL DEAL</div>
-<div class="tag">ONE WORLD. EVERY DEAL. PROTECTED BY AI.</div>
+<div class="tagline">ONE WORLD. EVERY DEAL. PROTECTED BY AI.</div>
 </header>
+
 <main>
-<h1>Discover opportunities <span class="gold">worldwide.</span></h1>
-<p>One marketplace. Endless possibilities.</p>
-<input class="search" id="search" placeholder="Search global deals..." oninput="searchDeals()">
-<h2>Explore categories</h2>
-<div class="categories">
-<div class="category">🏠 Property</div>
-<div class="category">🚗 Vehicles</div>
-<div class="category">💎 Luxury</div>
-<div class="category">💼 Business</div>
-<div class="category">📱 Electronics</div>
-<div class="category">🌍 Services</div>
+<h2>Discover global opportunities</h2>
+<p class="small">Find deals. Connect. Trade worldwide.</p>
+
+<input id="search" type="search" placeholder="Search deals worldwide..." oninput="renderDeals()">
+
+<h2>Categories</h2>
+<div class="categories" id="categories">
+<button class="active" onclick="setCategory('All',this)">All deals</button>
+<button onclick="setCategory('Property',this)">Property</button>
+<button onclick="setCategory('Vehicles',this)">Vehicles</button>
+<button onclick="setCategory('Electronics',this)">Electronics</button>
+<button onclick="setCategory('Fashion',this)">Fashion</button>
+<button onclick="setCategory('Services',this)">Services</button>
+<button onclick="setCategory('Business',this)">Business</button>
 </div>
+
 <h2>Featured deals</h2>
-<div id="deals">
-<div class="deal"><h3>Global opportunities</h3><p>Discover deals from around the world.</p><button onclick="alert('Coming soon!')">Explore deals</button></div>
-<div class="deal"><h3 class="gold">AI Deal Guardian</h3><p>Smarter and safer global transactions.</p><button onclick="alert('AI protection coming soon!')">Discover AI</button></div>
+<div class="deals" id="deals"></div>
+
+<h2>Publish your deal</h2>
+<input id="title" placeholder="What are you selling?">
+<select id="newCategory">
+<option>Property</option>
+<option>Vehicles</option>
+<option>Electronics</option>
+<option>Fashion</option>
+<option>Services</option>
+<option>Business</option>
+</select>
+<input id="price" placeholder="Price">
+<input id="country" placeholder="Country">
+<button onclick="addDeal()">＋ Publish listing</button>
+
+<h2>AI Deal Guardian</h2>
+<div class="card">
+<h3>Deal protection</h3>
+<p class="small">Your AI-powered deal assistant. Get help reviewing offers and identifying potential risks.</p>
+<button onclick="alert('AI Deal Guardian demo. Real AI integration will be added in a future step.')">Open AI Deal Guardian</button>
 </div>
 </main>
+
 <footer>GLOBAL DEAL © 2026<br>One world. Every deal.</footer>
+
 <script>
-function searchDeals(){
-const q=document.getElementById('search').value.toLowerCase();
-document.querySelectorAll('.deal').forEach(d=>{
-d.style.display=d.innerText.toLowerCase().includes(q)?'block':'none';
+const deals=[
+{title:"Modern apartment",category:"Property",price:"€185,000",country:"Italy"},
+{title:"Luxury sports car",category:"Vehicles",price:"€42,000",country:"Germany"},
+{title:"Professional laptop",category:"Electronics",price:"€950",country:"France"},
+{title:"Premium fashion collection",category:"Fashion",price:"€250",country:"Sweden"},
+{title:"Digital marketing service",category:"Services",price:"€500",country:"Worldwide"},
+{title:"Established online business",category:"Business",price:"€25,000",country:"Spain"}
+];
+let selectedCategory="All";
+
+function setCategory(category,button){
+selectedCategory=category;
+document.querySelectorAll(".categories button").forEach(b=>b.classList.remove("active"));
+button.classList.add("active");
+renderDeals();
+}
+
+function renderDeals(){
+const query=document.getElementById("search").value.toLowerCase();
+const filtered=deals.filter(deal=>
+(selectedCategory==="All"||deal.category===selectedCategory)&&
+(deal.title.toLowerCase().includes(query)||
+deal.category.toLowerCase().includes(query)||
+deal.country.toLowerCase().includes(query))
+);
+const container=document.getElementById("deals");
+container.innerHTML="";
+if(filtered.length===0){
+container.innerHTML="<p>No deals found. Try another search.</p>";
+return;
+}
+filtered.forEach(deal=>{
+const card=document.createElement("div");
+card.className="card";
+const title=document.createElement("h3");
+title.textContent=deal.title;
+const category=document.createElement("p");
+category.className="small";
+category.textContent=deal.category+" · "+deal.country;
+const price=document.createElement("div");
+price.className="price";
+price.textContent=deal.price;
+const button=document.createElement("button");
+button.textContent="View deal";
+button.onclick=()=>alert(deal.title+"\n"+deal.price+"\n"+deal.country+"\n\nDemo listing. Contact and secure transaction features are coming soon.");
+card.append(title,category,price,button);
+container.appendChild(card);
 });
 }
+
+function addDeal(){
+const title=document.getElementById("title").value.trim();
+const category=document.getElementById("newCategory").value;
+const price=document.getElementById("price").value.trim();
+const country=document.getElementById("country").value.trim();
+if(!title||!price||!country){
+alert("Please fill in all fields.");
+return;
+}
+deals.unshift({title,category,price,country});
+document.getElementById("title").value="";
+document.getElementById("price").value="";
+document.getElementById("country").value="";
+selectedCategory="All";
+document.querySelectorAll(".categories button").forEach(b=>b.classList.remove("active"));
+document.querySelector(".categories button").classList.add("active");
+renderDeals();
+alert("Your demo listing has been added!");
+}
+renderDeals();
 </script>
 </body>
 </html>
+
 
