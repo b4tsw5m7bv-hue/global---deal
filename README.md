@@ -1,2 +1,0 @@
-# global---deal
-Puplic 
